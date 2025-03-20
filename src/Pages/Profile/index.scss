@@ -1,0 +1,110 @@
+/* filepath: d:\Fibo-platform\FE_Fibo_Platform\src\Pages\Profile\index.scss */
+.Profile{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.profile {
+  padding: 20px;
+  display: block;
+  justify-content: center;
+}
+
+.profile__header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.profile__avatar img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  margin-right: 20px;
+}
+
+.profile__info {
+  flex-grow: 1;
+}
+
+.profile__username {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.profile__username h2 {
+  margin-right: 20px;
+}
+
+.profile__username button {
+  margin-right: 10px;
+  padding: 5px 10px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.profile__stats {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.profile__stats span {
+  margin-right: 20px;
+}
+
+.profile__name h3 {
+  margin: 0;
+}
+
+.profile__content {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile__stories {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.profile__story {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 20px;
+}
+
+.profile__story img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-bottom: 5px;
+}
+
+.profile__posts {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile__tabs {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+}
+
+.profile__tabs span {
+  cursor: pointer;
+  padding: 10px;
+  border-bottom: 2px solid transparent;
+}
+
+.profile__tabs span:hover {
+  border-bottom: 2px solid #000;
+}
+
+.profile__post img {
+  width: 100%;
+  max-width: 300px;
+}

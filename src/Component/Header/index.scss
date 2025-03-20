@@ -1,0 +1,30 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #4267B2;
+    color: white;
+  }
+  
+  .header__left img {
+    height: 40px;
+    margin-left: 40px;
+  }
+  
+  .header__center input {
+    width: 300px;
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+  }
+  
+  .header__right {
+    display: flex;
+    align-items: center;
+  }
+  
+  .header__option {
+    margin: 0 10px;
+    cursor: pointer;
+  }
