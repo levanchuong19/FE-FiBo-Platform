@@ -1,0 +1,147 @@
+/* filepath: d:\Fibo-platform\FE_Fibo_Platform\src\Pages\Login\index.scss */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #fafafa;
+}
+
+.login-left {
+  display: none;
+}
+
+.login-right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-box {
+  background-color: #fff;
+  border: 1px solid #dbdbdb;
+  padding: 20px;
+  margin-bottom: 10px;
+  text-align: center;
+  width: 350px;
+}
+
+.login-logo {
+  font-family: 'Billabong', cursive;
+  font-size: 50px;
+  margin-bottom: 20px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-input {
+  border: 1px solid #dbdbdb;
+  border-radius: 3px;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #fafafa;
+}
+
+.login-button {
+  background-color: #0095f6;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  padding: 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.login-divider {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.login-divider::before,
+.login-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #dbdbdb;
+}
+
+.login-divider::before {
+  margin-right: 10px;
+}
+
+.login-divider::after {
+  margin-left: 10px;
+}
+
+.login-facebook-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #0095f6;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  padding: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.facebook-logo {
+  width: 20px;
+  margin-right: 10px;
+}
+
+.login-forgot-password {
+  color: #00376b;
+  text-decoration: none;
+}
+
+.signup-box {
+  background-color: #fff;
+  border: 1px solid #dbdbdb;
+  padding: 20px;
+  text-align: center;
+  width: 350px;
+}
+
+.signup-box a {
+  color: #0095f6;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.get-app {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.app-stores {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.app-store {
+  width: 136px;
+  height: 40px;
+  margin: 0 5px;
+}
+
+@media (min-width: 768px) {
+  .login-container {
+    justify-content: space-between;
+  }
+
+  .login-left {
+    display: block;
+  }
+
+  .login-image {
+    max-width: 380px;
+    margin-right: 50px;
+  }
+}

@@ -1,4 +1,6 @@
+import { Button } from "antd";
 import "./index.scss";
+import { SettingOutlined } from "@ant-design/icons";
 
 function Profile() {
   return (
@@ -13,9 +15,11 @@ function Profile() {
         <div className="profile__info">
           <div className="profile__username">
             <h2>chuong_191</h2>
-            <button>Edit profile</button>
-            <button>View archive</button>
-            <button>Settings</button>
+            <Button>Edit profile</Button>
+            <Button>View archive</Button>
+            {/* <Button> */}
+            <SettingOutlined />
+            {/* </Button> */}
           </div>
           <div className="profile__stats">
             <span>1 post</span>
@@ -31,7 +35,10 @@ function Profile() {
       <div className="profile__content">
         <div className="profile__stories">
           <div className="profile__story">
-            <img src="https://via.placeholder.com/80" alt="Story" />
+            <img
+              src="https://scontent.fsgn5-5.fna.fbcdn.net/v/t39.30808-6/479904496_1366714647835083_3637611312555656878_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=a5f93a&_nc_eui2=AeEblLcXxqgdL1JASyjR_JAWC7dUwBIkft4Lt1TAEiR-3rp_qXelKWh_s53LQLAyT-6XahIH431-Wep-iez7jWLv&_nc_ohc=VKuCU1paZQQQ7kNvgFaqOa4&_nc_oc=Adl98SxVC0FodtyX9P1-FwtJVzxcNw1MbAFENZFG8Gc20m4XyCDiVYIj-HMyf7RF-jU&_nc_zt=23&_nc_ht=scontent.fsgn5-5.fna&_nc_gid=taQ4F4N7PTSfRn-E6xYnCw&oh=00_AYFQ_vvjtpxlBmPw8pGOzvbWtOjCe6R-rKgVLKechaZvAQ&oe=67E2ECAC"
+              alt="Story"
+            />
             <span>Story 1</span>
           </div>
           <div className="profile__story">
@@ -46,7 +53,10 @@ function Profile() {
             <span>TAGGED</span>
           </div>
           <div className="profile__post">
-            <img src="https://via.placeholder.com/300" alt="Post" />
+            <img
+              src="https://www.instagram.com/_3blackrose_/p/C5Ys0dnyKYbkcGgsyh9F1tTUMKTAiXmerfp8yQ0/"
+              alt="Post"
+            />
           </div>
         </div>
       </div>

@@ -1,16 +1,18 @@
 import { Outlet } from "react-router-dom";
-// import Header from "../Header";
-// import Header from "../Header";
-// import Footer from "../Footer";
+import Header from "../Header";
+import "./index.scss";
 
 function Layout() {
   return (
-    <div>
-      {/* <Header /> */}
-      {/* <main style={{ paddingTop: "80px" }}> */}
-      <Outlet />
-      {/* </main> */}
-      {/* <Footer /> */}
+    <div style={{ display: "flex", height: "100vh" }}>
+      <div>
+        <Header />
+      </div>
+      <div className="Layout-Content">
+        <div className="layout-content">
+          <Outlet />
+        </div>
+      </div>
     </div>
   );
 }
