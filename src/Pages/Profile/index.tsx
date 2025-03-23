@@ -1,20 +1,121 @@
-import { Button } from "antd";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
+import { Button, GetProp, Upload, UploadProps } from "antd";
 import "./index.scss";
-import { SettingOutlined } from "@ant-design/icons";
+import {
+  LoadingOutlined,
+  PlusOutlined,
+  SettingOutlined,
+} from "@ant-design/icons";
+import { useEffect, useState } from "react";
+import { User } from "../../Model/user";
+import api from "../../Config/api";
+import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import { toast } from "react-toastify";
+
+type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
+
+const getBase64 = (img: FileType, callback: (url: string) => void) => {
+  const reader = new FileReader();
+  reader.addEventListener("load", () => callback(reader.result as string));
+  reader.readAsDataURL(img);
+};
+
+const beforeUpload = (file: FileType) => {
+  const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
+  if (!isJpgOrPng) {
+    toast.error("You can only upload JPG/PNG file!");
+  }
+  const isLt2M = file.size / 1024 / 1024 < 2;
+  if (!isLt2M) {
+    toast.error("Image must smaller than 2MB!");
+  }
+  return isJpgOrPng && isLt2M;
+};
 
 function Profile() {
+  const [profile, setProfile] = useState<User>();
+  const navigate = useNavigate();
+
+  const fetchProfile = async () => {
+    const token = localStorage.getItem("token");
+    console.log("token", token);
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        console.log("Decoded Token:", decodedToken);
+        const idAccount = decodedToken.sub;
+        const response = await api.get(`account/${idAccount}`);
+        console.log(response.data.data);
+        setProfile(response.data);
+      } catch (err) {
+        console.log("error", err);
+      }
+    } else {
+      navigate("/login");
+    }
+  };
+
+  useEffect(() => {
+    fetchProfile();
+  }, [navigate]);
+
+  const [loading, setLoading] = useState(false);
+  const [imageUrl, setImageUrl] = useState<string>();
+
+  const handleChange: UploadProps["onChange"] = (info) => {
+    if (info.file.status === "uploading") {
+      setLoading(true);
+      return;
+    }
+    if (info.file.status === "done") {
+      // Get this url from response in real world.
+      getBase64(info.file.originFileObj as FileType, (url) => {
+        setLoading(false);
+        setImageUrl(url);
+      });
+    }
+  };
+
+  const uploadButton = (
+    <button style={{ border: 0, background: "none" }} type="button">
+      {loading ? <LoadingOutlined /> : <PlusOutlined />}
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </button>
+  );
+
   return (
     <div className="profile">
       <div className="profile__header">
         <div className="profile__avatar">
-          <img
-            src="https://scontent.fsgn5-10.fna.fbcdn.net/v/t39.30808-6/480269034_1366708034502411_8861701056649694706_n.jpg?stp=dst-jpg_s206x206_tt6&_nc_cat=107&ccb=1-7&_nc_sid=fe5ecc&_nc_eui2=AeEXyv99t2XvQjhe2a3rNgK6jUMunQ6LApCNQy6dDosCkO1Ge85I8bRba1XHVonlMgeQxj7Dt0K5_i-RIRqEPwC-&_nc_ohc=b8jHLrb8ufMQ7kNvgE2lWFA&_nc_oc=AdnK6SeapKw90TDWQUNsjbmFhF5gJQvNkIxX-K8kgVRlZ3CZnKzcR3OD_jxS0BcAw-I&_nc_zt=23&_nc_ht=scontent.fsgn5-10.fna&_nc_gid=U6IiXeEvJ0t9CBBwu-CQVg&oh=00_AYEzxdN95fQafwDmv8B4z7FagedUzaOJH2iM8T7pAr2KRQ&oe=67E21664"
-            alt="Profile Avatar"
-          />
+          <Upload
+            name="file"
+            listType="picture-circle"
+            className="avatar-uploader"
+            showUploadList={false}
+            action={`http://localhost:8080/api/${profile?.id}upload-avatar`}
+            beforeUpload={beforeUpload}
+            onChange={handleChange}
+            headers={{
+              authorization: `Bearer ${localStorage.getItem("token")}`, // Gửi token nếu backend yêu cầu
+            }}
+            data={() => ({
+              idAccount: profile?.id, // Gửi kèm ID của user
+            })}
+          >
+            {profile?.image ? (
+              <div className="img">
+                <img className="img" src={profile?.image} alt="avatar" />
+              </div>
+            ) : (
+              uploadButton
+            )}
+          </Upload>
         </div>
         <div className="profile__info">
           <div className="profile__username">
-            <h2>chuong_191</h2>
+            <h2>{profile?.username}</h2>
             <Button>Edit profile</Button>
             <Button>View archive</Button>
             {/* <Button> */}
@@ -27,8 +128,8 @@ function Profile() {
             <span>1 following</span>
           </div>
           <div className="profile__name">
-            <h3>Lê Văn Chương</h3>
-            <p>@chuong_191</p>
+            <h3>{profile?.fullName}</h3>
+            {/* <p>@chuong_191</p> */}
           </div>
         </div>
       </div>
