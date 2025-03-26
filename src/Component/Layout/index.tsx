@@ -4,15 +4,15 @@ import "./index.scss";
 
 function Layout() {
   return (
-    <div style={{ display: "flex", height: "100vh" }}>
-      <div>
+    <div className="layout-container">
+      <div className="sidebar-container">
         <Header />
       </div>
-      <div className="Layout-Content">
-        <div className="layout-content">
+      <main className="layout-content">
+        <div className="content-wrapper">
           <Outlet />
         </div>
-      </div>
+      </main>
     </div>
   );
 }

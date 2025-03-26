@@ -1,11 +1,264 @@
-.Layout-Content{
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  margin-top: 50px;
-//   align-items: center;
-// background-color: red;
-
-
+/* Đảm bảo layout chiếm toàn bộ chiều cao */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: auto;
+  // overflow: hidden; /* Ngăn scroll trên body */
 }
 
+/* Container chính */
+.layout-container {
+  display: flex;
+  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden; /* Ngăn scroll trên container chính */
+}
+
+/* Sidebar chứa Header */
+.sidebar-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 250px; /* Chiều rộng của sidebar */
+  z-index: 1000;
+  background: #fff;
+  overflow-y: auto; /* Cho phép scroll nếu nội dung sidebar dài */
+}
+
+/* Nội dung chính (Page Home) */
+.layout-content {
+  margin-left: 250px; /* Đẩy nội dung chính sang phải để không bị che bởi sidebar */
+  flex: 1;
+  overflow-y: auto; /* Cho phép scroll nội dung chính */
+  user-select: auto; /* Đảm bảo nội dung có thể chọn được */
+  -webkit-user-select: auto;
+  -moz-user-select: auto;
+  -ms-user-select: auto;
+}
+
+.content-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: 30px 0;
+}
+
+/* CSS cho Header */
+.header {
+  width: 250px; /* Đảm bảo header chỉ rộng bằng sidebar */
+  &.non-selectable {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+  }
+}
+
+.sidebar {
+  max-width: 250px;
+  height: 100%; /* Đảm bảo sidebar chiếm toàn bộ chiều cao của container */
+  padding: 20px;
+  background-color: #fff;
+  border-right: 1px solid #ddd;
+  transition: width 0.3s;
+}
+
+.sidebar.collapsed {
+  width: 80px;
+}
+
+.sidebar__logo {
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  img {
+    width: 100px;
+    margin-bottom: 20px;
+    border-radius: 50%;
+    transition: width 0.3s;
+  }
+}
+
+.sidebar.collapsed .sidebar__logo img {
+  width: 50px;
+}
+
+.sidebar__option {
+  display: flex;
+  align-items: center;
+  padding: 13px 0;
+  cursor: pointer;
+  font-size: 19px;
+  transition: padding 0.3s;
+  position: relative;
+  flex-grow: 1;
+}
+
+.sidebar.collapsed .sidebar__option {
+  padding: 12px 5px;
+}
+
+.sidebar__option span {
+  margin-left: 10px;
+  transition: opacity 0.3s;
+}
+
+.sidebar.collapsed .sidebar__option .span {
+  opacity: 0;
+}
+
+.sidebar__option:hover {
+  background-color: #f0f0f0;
+}
+
+.search-panel {
+  position: fixed; /* Sử dụng fixed để cố định search panel */
+  top: 0;
+  left: 80px; /* Điều chỉnh theo chiều rộng của sidebar khi collapsed */
+  width: 25%; /* Chiều rộng của search panel */
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000; /* Đảm bảo search panel nằm trên cùng */
+  .search {
+    flex-grow: 1;
+    height: 100%;
+    padding: 20px;
+    background-color: #fff;
+    border-left: 1px solid #ddd;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.search-panel h2 {
+  margin-bottom: 20px;
+}
+
+.search-panel input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.search-panel__recent {
+  margin-top: 20px;
+}
+
+.search-panel__recent h3 {
+  margin-bottom: 10px;
+}
+
+.search-panel__recent p {
+  color: #888;
+}
+
+.more-dropdown {
+  position: absolute;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 220px;
+  
+  top: -310px;
+  z-index: 1000;
+}
+
+.more-dropdown__option {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.more-dropdown__option span {
+  margin-left: 10px;
+}
+
+.more-dropdown__option:hover {
+  background-color: #f0f0f0;
+}
+
+.search-panel {
+  .search {
+    padding: 10px;
+
+    h2 {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .search-panel__results {
+      ul {
+        list-style: none;
+        padding: 0;
+
+        .search-result-item {
+          display: flex;
+          align-items: center;
+          padding: 8px 0;
+          cursor: pointer;
+
+          &:hover {
+            background-color: #f0f0f0;
+          }
+
+          .search-result-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+          }
+
+          .search-result-info {
+            display: flex;
+            flex-direction: column;
+
+            .search-result-name {
+              font-weight: 500;
+              font-size: 14px;
+            }
+
+            .search-result-status {
+              font-size: 12px;
+              color: #606770;
+            }
+          }
+        }
+      }
+    }
+
+    .search-panel__recent {
+      h3 {
+        font-size: 16px;
+        margin: 10px 0;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+
+        li {
+          padding: 8px 0;
+          font-size: 14px;
+          color: #050505;
+
+          &:hover {
+            background-color: #f0f0f0;
+          }
+        }
+      }
+
+      p {
+        color: #606770;
+        font-size: 14px;
+      }
+    }
+  }
+}

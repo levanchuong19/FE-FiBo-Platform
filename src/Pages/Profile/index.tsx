@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Button, GetProp, Upload, UploadProps } from "antd";
 import "./index.scss";
@@ -62,7 +61,7 @@ function Profile() {
   }, [navigate]);
 
   const [loading, setLoading] = useState(false);
-  const [imageUrl, setImageUrl] = useState<string>();
+  const [, setImageUrl] = useState<string>();
 
   const handleChange: UploadProps["onChange"] = (info) => {
     if (info.file.status === "uploading") {
@@ -116,7 +115,9 @@ function Profile() {
         <div className="profile__info">
           <div className="profile__username">
             <h2>{profile?.username}</h2>
-            <Button>Edit profile</Button>
+            <Button onClick={() => navigate("/updateProfile")}>
+              Edit profile
+            </Button>
             <Button>View archive</Button>
             {/* <Button> */}
             <SettingOutlined />

@@ -24,8 +24,10 @@ h1{
 .regiter-form{
     // border: 1px solid rgb(99, 99, 99);
     border-radius: 10px;
-    width: 430px;
-    display: block;
+    width: 450px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
     // justify-content: center;
     // align-items: center;
     // text-align: center;
@@ -39,6 +41,7 @@ h1{
     justify-content: center;
     padding-bottom: 40px;
     background-color: #f2f4f7;
+    height: 100%;
 }
 
 .span{
@@ -56,7 +59,7 @@ h1{
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 10px;
+    padding-left: 50px;
 }
 
 .h1{
