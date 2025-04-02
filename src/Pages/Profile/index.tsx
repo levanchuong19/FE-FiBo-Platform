@@ -34,7 +34,7 @@ const beforeUpload = (file: FileType) => {
 };
 
 function Profile() {
-  const [profile, setProfile] = useState<User>();
+  const [profile, setProfile] = useState<User | undefined>(undefined);
   const navigate = useNavigate();
 
   const fetchProfile = async () => {
@@ -46,7 +46,7 @@ function Profile() {
         console.log("Decoded Token:", decodedToken);
         const idAccount = decodedToken.sub;
         const response = await api.get(`account/${idAccount}`);
-        console.log(response.data.data);
+        console.log(response.data);
         setProfile(response.data);
       } catch (err) {
         console.log("error", err);
@@ -124,9 +124,15 @@ function Profile() {
             {/* </Button> */}
           </div>
           <div className="profile__stats">
-            <span>1 post</span>
-            <span>23 followers</span>
-            <span>1 following</span>
+            <span>{profile?.posts || 0} posts</span>
+            <span>{profile?.followers?.length || 0} followers</span>
+            <span>{profile?.following?.length || 0} following</span>
+            <span
+              style={{ cursor: "pointer" }}
+              onClick={() => navigate("/friend")}
+            >
+              Friends
+            </span>
           </div>
           <div className="profile__name">
             <h3>{profile?.fullName}</h3>

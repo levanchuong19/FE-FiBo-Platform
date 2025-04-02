@@ -29,7 +29,7 @@ import api from "../../Config/api";
 function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
   const [recentSearches, setRecentSearches] = useState([]);
   const navigate = useNavigate();
   const [isMoreOpen, setIsMoreOpen] = useState(false);
@@ -102,8 +102,9 @@ function Header() {
           }
         );
         console.log("Search API Response:", response.data);
-        setSearchResults(response.data || []);
-
+        // setSearchResults(response.data || []);
+        // đảm bảo setSearchResults luôn là một mảng
+        setSearchResults(Array.isArray(response.data) ? response.data : []);
         // Lưu query vào lịch sử nếu có kết quả
         if (response.data.length > 0) {
           saveRecentSearch(query);

@@ -10,8 +10,8 @@ export interface User {
   image: string;
   address:string;
   posts:number;
-  followers:number;
-  following:number;
+  followers: User[]; 
+  following: User[];
   confirmPassword: string;
   role: "ADMIN" | "USER" ;
   createdAt: string;

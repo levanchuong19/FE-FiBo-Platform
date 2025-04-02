@@ -1,0 +1,61 @@
+.suggested-friends {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+  
+    h2 {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+  
+    .ant-tabs-nav {
+      margin-bottom: 20px;
+  
+      .ant-tabs-tab {
+        font-size: 16px;
+        padding: 8px 16px;
+      }
+    }
+  
+    .ant-list-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f0f0;
+  
+      .ant-list-item-meta {
+        flex: 1;
+  
+        .ant-list-item-meta-avatar {
+          margin-right: 10px;
+        }
+  
+        .ant-list-item-meta-title {
+          font-weight: 500;
+          font-size: 14px;
+          margin-bottom: 0;
+        }
+  
+        .ant-list-item-meta-description {
+          color: #8e8e8e;
+          font-size: 12px;
+  
+          .suggested-text {
+            color: #8e8e8e;
+          }
+        }
+      }
+  
+      .ant-btn {
+        border-radius: 5px;
+        font-size: 14px;
+        height: 32px;
+      }
+    }
+  }
+  .ant-list .ant-list-item .ant-list-item-meta .ant-list-item-meta-content {
+    flex: 1 0;
+     width: 100%; 
+    color: rgba(0, 0, 0, 0.88);
+  }

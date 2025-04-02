@@ -14,6 +14,7 @@ import { JSX } from "@emotion/react/jsx-runtime";
 import Register from "./Pages/register";
 import UpdateProfile from "./Pages/UpdateProfile";
 import AccountProfile from "./Pages/AccountProfile";
+import Friend from "./Pages/Friend";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -51,6 +52,10 @@ function App() {
           path: "/accountProfile/:id",
           element: <PrivateRoute element={<AccountProfile />} />,
         },
+        {
+          path: "/friend/accountProfile/:id",
+          element: <PrivateRoute element={<AccountProfile />} />,
+        },
 
         {
           path: "/reels",
@@ -63,6 +68,10 @@ function App() {
         {
           path: "/updateProfile",
           element: <PrivateRoute element={<UpdateProfile />} />,
+        },
+        {
+          path: "/friend",
+          element: <PrivateRoute element={<Friend />} />,
         },
       ],
     },

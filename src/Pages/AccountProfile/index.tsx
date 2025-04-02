@@ -19,80 +19,118 @@ function AccountProfile() {
   const [isFollowing, setIsFollowing] = useState(false);
   const [friendshipStatus, setFriendshipStatus] = useState<string | null>(null);
 
-  const fetchProfile = async () => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      try {
-        const decodedToken: any = jwtDecode(token);
-        const idAccount = id || decodedToken.sub;
-        const response = await api.get(`account/${idAccount}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        console.log("Profile API Response:", response.data);
-        setProfile(response.data);
-        setIsOwnProfile(idAccount === decodedToken.sub);
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        try {
+          const decodedToken: any = jwtDecode(token);
+          const idAccount = id || decodedToken.sub; // ID của tài khoản đang xem profile
+          const currentUserId = decodedToken.sub; // ID của tài khoản hiện tại
 
-        // Kiểm tra trạng thái theo dõi
-        const followingResponse = await api.get(
-          `${decodedToken.sub}/following`,
-          {
+          // Lấy thông tin profile
+          const response = await api.get(`account/${idAccount}`, {
             headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        console.log("followingResponse", followingResponse.data);
-        setIsFollowing(
-          followingResponse.data.some((acc: User) => acc. === idAccount)
-        );
+          });
+          console.log("Profile API Response:", response.data);
+          setProfile(response.data);
+          setIsOwnProfile(idAccount === currentUserId);
 
-        // Kiểm tra trạng thái kết bạn
-        const friendResponse = await api.get(`${idAccount}/friends`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const isFriend = friendResponse.data.some(
-          (friend: User) => friend.id === decodedToken.sub
-        );
-        if (isFriend) {
-          setFriendshipStatus("FRIENDS");
-        } else {
-          const pendingResponse = await api.get(
-            `${idAccount}/friend/requests`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
+          // Kiểm tra trạng thái theo dõi
+          // const followingResponse = await api.get(
+          //   `${currentUserId}/following`,
+          //   {
+          //     headers: { Authorization: `Bearer ${token}` },
+          //   }
+          // );
+          // console.log("Following API Response:", followingResponse.data);
+          // console.log("idAccount:", idAccount);
+          // const Following = followingResponse.data.some(
+          //   (acc: any) => acc.id === parseInt(idAccount)
+          // );
+          // setIsFollowing(Following);
+          // console.log("isFollowing:", Following);
+
+          // // setIsFollowing(
+          // //   followingResponse.data.some((acc: User) => acc.id === idAccount)
+          // // );
+          // // console.log("isFollowing:", isFollowing);
+
+          // Kiểm tra trạng thái kết bạn
+          const friendResponse = await api.get(`${idAccount}/friends`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const isFriend = friendResponse.data.map((friend: any) => friend.id);
+          console.log("isFriend:", isFriend);
+          if (isFriend == idAccount) {
+            setFriendshipStatus("FRIENDS");
+          } else {
+            // Kiểm tra xem account đăng nhập có gửi lời mời không
+            const sentRequestsResponse = await api.get(
+              `${idAccount}/friend/requests`,
+              {
+                headers: { Authorization: `Bearer ${token}` },
+              }
+            );
+            const isPendingSent = sentRequestsResponse.data.map(
+              (friend: any) => friend.id
+            );
+            console.log("isPendingSent:", isPendingSent);
+            if (isPendingSent == currentUserId) {
+              setFriendshipStatus("PENDING");
+            } else {
+              // Kiểm tra xem account được xem có gửi lời mời cho account đăng nhập không
+              const receivedRequestsResponse = await api.get(
+                `${idAccount}/friend/sent`,
+                {
+                  headers: { Authorization: `Bearer ${token}` },
+                }
+              );
+              const isPendingReceived = receivedRequestsResponse.data.map(
+                (friend: any) => friend.id
+              );
+              console.log("isPendingReceived:", isPendingReceived);
+
+              if (isPendingReceived == currentUserId) {
+                setFriendshipStatus("REQUESTED");
+              } else {
+                setFriendshipStatus(null);
+              }
             }
-          );
-          const isPending = pendingResponse.data.some(
-            (req: User) => req.id === decodedToken.sub
-          );
-          setFriendshipStatus(isPending ? "PENDING" : null);
+          }
+          console.log("friendshipStatus:", friendshipStatus);
+        } catch (err) {
+          console.log("error", err);
+          toast.error("Không thể tải thông tin tài khoản");
+          navigate("/login");
         }
-      } catch (err) {
-        console.log("error", err);
-        toast.error("Không thể tải thông tin tài khoản");
+      } else {
         navigate("/login");
       }
-    } else {
-      navigate("/login");
-    }
-  };
+    };
 
-  const fetchPosts = async () => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      try {
-        const idAccount = id || jwtDecode(token).sub;
-        const response = await api.get(`posts/${idAccount}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        console.log("Posts API Response:", response.data);
-        setPosts(response.data || []);
-      } catch (err) {
-        console.error("Error fetching posts:", err);
-        toast.error("Không thể tải bài viết");
-        setPosts([]);
-      }
-    }
-  };
+    fetchProfile();
+  }, [id, navigate]);
 
+  // const fetchPosts = async () => {
+  //   const token = localStorage.getItem("token");
+  //   if (token) {
+  //     try {
+  //       const idAccount = id || jwtDecode(token).sub;
+  //       const response = await api.get(`posts/${idAccount}`, {
+  //         headers: { Authorization: `Bearer ${token}` },
+  //       });
+  //       console.log("Posts API Response:", response.data);
+  //       setPosts(response.data || []);
+  //     } catch (err) {
+  //       console.error("Error fetching posts:", err);
+  //       toast.error("Không thể tải bài viết");
+  //       setPosts([]);
+  //     }
+  //   }
+  // };
+
+  // xử lý follow/unfollow tài khoản
   const handleFollowToggle = async () => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -106,7 +144,7 @@ function AccountProfile() {
           });
           toast.success("Đã hủy theo dõi tài khoản");
           setIsFollowing(false);
-          fetchProfile();
+          // fetchProfile();
         } else {
           const response = await api.post(
             `follow/${followerId}`,
@@ -119,16 +157,17 @@ function AccountProfile() {
           setIsFollowing(true);
           console.log("data follow", response.data);
           toast.success("Đã theo dõi tài khoản");
-          fetchProfile();
+          // fetchProfile();
         }
       } catch (err) {
         console.error("Error toggling follow:", err);
         toast.error("Không thể thực hiện thao tác");
-        fetchProfile();
+        // fetchProfile();
       }
     }
   };
 
+  //xử lý gửi yêu cầu kết bạn
   const handleFriendRequest = async () => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -151,6 +190,7 @@ function AccountProfile() {
     }
   };
 
+  //xử lý hủy yêu cầu kết bạn
   const handleCancelFriendRequest = async () => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -169,6 +209,54 @@ function AccountProfile() {
     }
   };
 
+  //xử lý từ chối yêu cầu kết bạn
+  const handleDeclineFriendRequest = async () => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decodedToken: any = jwtDecode(token);
+        await api.post(
+          `friend/reject/${id}`,
+          {},
+          {
+            params: { receiverId: decodedToken.sub },
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        toast.success("Đã từ chối yêu cầu kết bạn");
+        setFriendshipStatus(null);
+      } catch (err) {
+        console.error("Error declining friend request:", err);
+        toast.error("Không thể từ chối yêu cầu kết bạn");
+      }
+    }
+  };
+
+  //xử lý chấp nhận yêu cầu kết bạn
+  const handleAcceptFriendRequest = async () => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decodedToken: any = jwtDecode(token);
+        await api.post(
+          `friend/accept/${id}`,
+          {},
+          {
+            params: { receiverId: decodedToken.sub },
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        toast.success("Đã chấp nhận yêu cầu kết bạn");
+        setFriendshipStatus("FRIENDS");
+      } catch (err) {
+        console.error("Error accepting friend request:", err);
+        toast.error("Không thể chấp nhận yêu cầu kết bạn");
+      }
+    }
+  };
+
+  //xử lý hủy kết bạn
   const handleUnfriend = async () => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -187,10 +275,10 @@ function AccountProfile() {
     }
   };
 
-  useEffect(() => {
-    fetchProfile();
-    fetchPosts();
-  }, [id]);
+  // useEffect(() => {
+  //   // fetchProfile();
+  //   // fetchPosts();
+  // }, [id]);
 
   if (!profile) {
     return <div>Loading...</div>;
@@ -234,6 +322,15 @@ function AccountProfile() {
                   <Button onClick={handleCancelFriendRequest}>
                     Hủy yêu cầu
                   </Button>
+                ) : friendshipStatus === "REQUESTED" ? (
+                  <>
+                    <Button type="primary" onClick={handleAcceptFriendRequest}>
+                      Xác nhận
+                    </Button>
+                    <Button onClick={handleDeclineFriendRequest}>
+                      Từ chối
+                    </Button>
+                  </>
                 ) : (
                   <Button onClick={handleFriendRequest}>Kết bạn</Button>
                 )}
@@ -243,8 +340,8 @@ function AccountProfile() {
           </div>
           <div className="profile__stats">
             <span>{profile?.posts || 0} posts</span>
-            <span>{profile?.followers || 0} followers</span>
-            <span>{profile?.following || 0} following</span>
+            <span>{profile?.followers?.length || 0} followers</span>
+            <span>{profile?.following?.length || 0} following</span>
           </div>
           <div className="profile__name">
             <h3>{profile?.username}</h3>
