@@ -36,68 +36,52 @@ function AccountProfile() {
           setProfile(response.data);
           setIsOwnProfile(idAccount === currentUserId);
 
-          // Kiểm tra trạng thái theo dõi
-          // const followingResponse = await api.get(
-          //   `${currentUserId}/following`,
-          //   {
-          //     headers: { Authorization: `Bearer ${token}` },
-          //   }
-          // );
-          // console.log("Following API Response:", followingResponse.data);
-          // console.log("idAccount:", idAccount);
-          // const Following = followingResponse.data.some(
-          //   (acc: any) => acc.id === parseInt(idAccount)
-          // );
-          // setIsFollowing(Following);
-          // console.log("isFollowing:", Following);
-
-          // // setIsFollowing(
-          // //   followingResponse.data.some((acc: User) => acc.id === idAccount)
-          // // );
-          // // console.log("isFollowing:", isFollowing);
-
           // Kiểm tra trạng thái kết bạn
-          const friendResponse = await api.get(`${idAccount}/friends`, {
+          const friendResponse = await api.get(`${currentUserId}/friends`, {
             headers: { Authorization: `Bearer ${token}` },
           });
-          const isFriend = friendResponse.data.map((friend: any) => friend.id);
-          console.log("isFriend:", isFriend);
-          if (isFriend == idAccount) {
+          const friendIds = friendResponse.data.map((friend: any) => friend.id);
+          console.log("Friend IDs:", friendIds);
+
+          // Kiểm tra xem idAccount có trong danh sách bạn bè của currentUserId không
+          if (friendIds.includes(parseInt(idAccount))) {
             setFriendshipStatus("FRIENDS");
           } else {
-            // Kiểm tra xem account đăng nhập có gửi lời mời không
+            // Kiểm tra xem currentUserId đã gửi lời mời cho idAccount chưa
             const sentRequestsResponse = await api.get(
-              `${idAccount}/friend/requests`,
+              `${currentUserId}/friend/sent`,
               {
                 headers: { Authorization: `Bearer ${token}` },
               }
             );
-            const isPendingSent = sentRequestsResponse.data.map(
+            const sentRequestIds = sentRequestsResponse.data.map(
               (friend: any) => friend.id
             );
-            console.log("isPendingSent:", isPendingSent);
-            if (isPendingSent == currentUserId) {
+            console.log("Sent Request IDs:", sentRequestIds);
+
+            if (sentRequestIds.includes(parseInt(idAccount))) {
               setFriendshipStatus("PENDING");
             } else {
-              // Kiểm tra xem account được xem có gửi lời mời cho account đăng nhập không
+              // Kiểm tra xem idAccount đã gửi lời mời cho currentUserId chưa
               const receivedRequestsResponse = await api.get(
-                `${idAccount}/friend/sent`,
+                `${currentUserId}/friend/requests`,
                 {
                   headers: { Authorization: `Bearer ${token}` },
                 }
               );
-              const isPendingReceived = receivedRequestsResponse.data.map(
+              const receivedRequestIds = receivedRequestsResponse.data.map(
                 (friend: any) => friend.id
               );
-              console.log("isPendingReceived:", isPendingReceived);
+              console.log("Received Request IDs:", receivedRequestIds);
 
-              if (isPendingReceived == currentUserId) {
+              if (receivedRequestIds.includes(parseInt(idAccount))) {
                 setFriendshipStatus("REQUESTED");
               } else {
                 setFriendshipStatus(null);
               }
             }
           }
+
           console.log("friendshipStatus:", friendshipStatus);
         } catch (err) {
           console.log("error", err);

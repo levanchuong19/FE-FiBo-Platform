@@ -1,6 +1,16 @@
+// html,
+// body {
+//   margin: 0;
+//   padding: 0;
+//   height: 100%;
+//   overflow: hidden; /* Ngăn cuộn toàn bộ trang */
+// }
+
 .header {
   display: flex;
+  // background-color: red;
   // position: relative; 
+  width: 200px;
   position: fixed;
     left: 0;
     top: 0;
@@ -9,7 +19,7 @@
 }
 
 .sidebar {
-  max-width: 250px;
+  width: 200px;
   height: 100vh; /* Ensure the sidebar occupies the full height of the viewport */
   padding: 20px;
   background-color: #fff;
@@ -58,6 +68,7 @@
 .sidebar__option span {
   margin-left: 10px;
   transition: opacity 0.3s;
+  
 }
 
 .sidebar.collapsed .sidebar__option .span {

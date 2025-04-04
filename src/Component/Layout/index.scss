@@ -21,7 +21,7 @@ html, body {
   top: 0;
   left: 0;
   height: 100vh;
-  width: 250px; /* Chiều rộng của sidebar */
+  width: 200px; /* Chiều rộng của sidebar */
   z-index: 1000;
   background: #fff;
   overflow-y: auto; /* Cho phép scroll nếu nội dung sidebar dài */
@@ -42,12 +42,12 @@ html, body {
   display: flex;
   justify-content: center;
   width: 100%;
-  margin: 30px 0;
+  // margin: 30px 0;
 }
 
 /* CSS cho Header */
 .header {
-  width: 250px; /* Đảm bảo header chỉ rộng bằng sidebar */
+  width: 200px; /* Đảm bảo header chỉ rộng bằng sidebar */
   &.non-selectable {
     user-select: none;
     -webkit-user-select: none;
@@ -57,7 +57,7 @@ html, body {
 }
 
 .sidebar {
-  max-width: 250px;
+  width: 200px;
   height: 100%; /* Đảm bảo sidebar chiếm toàn bộ chiều cao của container */
   padding: 20px;
   background-color: #fff;

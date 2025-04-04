@@ -9,12 +9,12 @@ import Login from "./Pages/Login"; // Trang đăng nhập
 import Profile from "./Pages/Profile";
 import Explore from "./Pages/Explore";
 import Reels from "./Pages/Reels";
-import Message from "./Pages/Messages";
 import { JSX } from "@emotion/react/jsx-runtime";
 import Register from "./Pages/register";
 import UpdateProfile from "./Pages/UpdateProfile";
 import AccountProfile from "./Pages/AccountProfile";
 import Friend from "./Pages/Friend";
+import Message from "./Pages/Message";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
