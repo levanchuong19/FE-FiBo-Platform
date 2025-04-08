@@ -1,5 +1,6 @@
 import { createRoot } from "react-dom/client";
 import "./index.scss";
+import "./polyfills.ts";
 import App from "./App.tsx";
 import React from "react";
 import { ToastContainer } from "react-toastify";

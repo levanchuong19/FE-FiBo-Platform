@@ -9,11 +9,15 @@ import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
 import ReplyIcon from "@mui/icons-material/Reply";
 import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAlt";
 import EditIcon from "@mui/icons-material/Edit";
+import VideoCallIcon from "@mui/icons-material/VideoCall";
+import CallIcon from "@mui/icons-material/Call";
 import DeleteIcon from "@mui/icons-material/Delete";
 import api from "../../Config/api";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "react-toastify";
 import { User } from "../../Model/user";
+import useRealtime from "../../hooks/useRealtime";
+import { useNavigate } from "react-router-dom";
 
 interface Friend {
   id: string;
@@ -48,6 +52,7 @@ function Message() {
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [isAtBottom, setIsAtBottom] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -57,6 +62,11 @@ function Message() {
       fetchFriends();
     }
   }, []);
+
+  useRealtime(async (body: { body: string }) => {
+    console.log(body?.body == "New message");
+    fetchMessages(selectedFriend?.id || "");
+  });
 
   useEffect(() => {
     const handleScroll = () => {
@@ -114,20 +124,19 @@ function Message() {
     if (token) {
       const decodedToken: any = jwtDecode(token);
       const userId = decodedToken.sub;
-      try {
-        const response = await api.get(
-          `messages/conversation?userId1=${userId}&userId2=${friendId}`
-        );
-        setMessages(response.data);
-        setTimeout(() => {
+      if (friendId) {
+        try {
+          const response = await api.get(
+            `messages/conversation?userId1=${userId}&userId2=${friendId}`
+          );
+          setMessages(response.data);
           if (messagesEndRef.current) {
             messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
           }
-          setIsAtBottom(true);
-        }, 0);
-      } catch (error) {
-        console.error("Error fetching messages:", error);
-        toast.error("Không thể tải tin nhắn");
+        } catch (error) {
+          console.error("Error fetching messages:", error);
+          // toast.error("Không thể tải tin nhắn");
+        }
       }
     }
   };
@@ -343,6 +352,14 @@ function Message() {
     </Menu>
   );
 
+  const handleCall = (isVideoCall: boolean) => {
+    if (selectedFriend) {
+      navigate(
+        `/call?friendId=${selectedFriend.id}&isVideoCall=${isVideoCall}`
+      );
+    }
+  };
+
   return (
     <div className="message-container">
       <div className="friends-list">
@@ -400,7 +417,17 @@ function Message() {
                   {selectedFriend.fullName || selectedFriend.username}
                 </span>
               </div>
-              <MoreHorizIcon className="chat-options" />
+              <div className="chat-header-actions">
+                <CallIcon
+                  onClick={() => handleCall(false)}
+                  className="chat-action-icon"
+                />
+                <VideoCallIcon
+                  onClick={() => handleCall(true)}
+                  className="chat-action-icon"
+                />
+                <MoreHorizIcon className="chat-options" />
+              </div>
             </div>
 
             <div className="messages-container" ref={messagesContainerRef}>

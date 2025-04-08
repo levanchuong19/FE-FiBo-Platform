@@ -165,6 +165,23 @@ body {
       }
     }
 
+    .chat-header-actions{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .chat-action-icon{
+      cursor: pointer;
+      color: #65676b;
+     font-size: 23px;
+      margin: 0 5px;
+      transition: color 0.3s ease;
+      &:hover {
+        color: #0084ff;
+      }
+    }
+
     .chat-options {
       cursor: pointer;
       color: #65676b;
@@ -347,6 +364,12 @@ body {
       //   margin-bottom: 20px;
       // }
     }
+  }
+  .chat-header-actions{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
   }
 
   .message-input {

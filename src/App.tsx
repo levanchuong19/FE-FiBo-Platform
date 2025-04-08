@@ -5,7 +5,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import Layout from "./Component/Layout";
-import Login from "./Pages/Login"; // Trang đăng nhập
+import Login from "./Pages/Login";
 import Profile from "./Pages/Profile";
 import Explore from "./Pages/Explore";
 import Reels from "./Pages/Reels";
@@ -15,6 +15,19 @@ import UpdateProfile from "./Pages/UpdateProfile";
 import AccountProfile from "./Pages/AccountProfile";
 import Friend from "./Pages/Friend";
 import Message from "./Pages/Message";
+import PostComponent from "./Pages/Post";
+import CallPage from "./Pages/Call";
+import IncomingCall from "./Pages/IncomingCall";
+
+// Định nghĩa AppWrapper để bao gồm IncomingCall
+function AppWrapper({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      {children}
+      <IncomingCall />
+    </>
+  );
+}
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -30,15 +43,23 @@ function App() {
   const router = createBrowserRouter([
     {
       path: "/login",
-      element: <Login />, // Trang login
+      element: <Login />,
     },
     {
       path: "/register",
-      element: <Register />, // Trang login
+      element: <Register />,
     },
     {
       path: "/",
-      element: <PrivateRoute element={<Layout />} />,
+      element: (
+        <PrivateRoute
+          element={
+            <AppWrapper>
+              <Layout />
+            </AppWrapper>
+          }
+        />
+      ),
       children: [
         {
           path: "/explore",
@@ -56,7 +77,14 @@ function App() {
           path: "/friend/accountProfile/:id",
           element: <PrivateRoute element={<AccountProfile />} />,
         },
-
+        {
+          path: "/",
+          element: <PrivateRoute element={<PostComponent />} />,
+        },
+        {
+          path: "/call",
+          element: <PrivateRoute element={<CallPage />} />,
+        },
         {
           path: "/reels",
           element: <PrivateRoute element={<Reels />} />,
@@ -76,6 +104,7 @@ function App() {
       ],
     },
   ]);
+
   return (
     <React.StrictMode>
       <RouterProvider router={router} />
