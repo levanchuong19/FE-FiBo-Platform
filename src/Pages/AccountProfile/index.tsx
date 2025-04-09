@@ -12,7 +12,7 @@ import "./index.scss";
 
 function AccountProfile() {
   const [profile, setProfile] = useState<User>();
-  const [posts, setPosts] = useState<{ id: string; image?: string }[]>([]);
+  const [posts] = useState<{ id: string; image?: string }[]>([]);
   const navigate = useNavigate();
   const { id } = useParams();
   const [isOwnProfile, setIsOwnProfile] = useState(false);

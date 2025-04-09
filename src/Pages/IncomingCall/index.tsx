@@ -33,7 +33,7 @@ function IncomingCall() {
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const navigate = useNavigate();
   const { setStream, setPeer, stream, peer } = useCall();
-  const [setIsVideoCall] = useState<boolean>(false);
+  const [, setIsVideoCall] = useState<boolean>(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
