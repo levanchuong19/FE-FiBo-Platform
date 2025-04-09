@@ -1,7 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect, useCallback } from "react";
 import { Input, Button, Dropdown, Menu, Modal, Upload, Avatar } from "antd";
-import { UploadOutlined, PictureOutlined } from "@ant-design/icons";
+import { PictureOutlined } from "@ant-design/icons";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import CommentIcon from "@mui/icons-material/Comment";
 import ShareIcon from "@mui/icons-material/Share";
@@ -194,7 +195,7 @@ const PostComponent: React.FC = () => {
           title={
             <div style={{ display: "flex", alignItems: "center" }}>
               <Avatar
-                src={user?.image || "https://via.placeholder.com/40"}
+                src={"https://via.placeholder.com/40"}
                 style={{ marginRight: 8 }}
               />
               <div>
