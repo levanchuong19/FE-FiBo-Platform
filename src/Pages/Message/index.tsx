@@ -357,6 +357,7 @@ function Message() {
       navigate(
         `/call?friendId=${selectedFriend.id}&isVideoCall=${isVideoCall}`
       );
+      console.log("videocall", isVideoCall);
     }
   };
 

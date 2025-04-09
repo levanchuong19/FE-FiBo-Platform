@@ -18,6 +18,7 @@ import Message from "./Pages/Message";
 import PostComponent from "./Pages/Post";
 import CallPage from "./Pages/Call";
 import IncomingCall from "./Pages/IncomingCall";
+import { CallProvider } from "./hooks/callContext";
 
 // Định nghĩa AppWrapper để bao gồm IncomingCall
 function AppWrapper({ children }: { children: React.ReactNode }) {
@@ -54,9 +55,11 @@ function App() {
       element: (
         <PrivateRoute
           element={
-            <AppWrapper>
-              <Layout />
-            </AppWrapper>
+            <CallProvider>
+              <AppWrapper>
+                <Layout />
+              </AppWrapper>
+            </CallProvider>
           }
         />
       ),

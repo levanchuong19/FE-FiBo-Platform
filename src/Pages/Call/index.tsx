@@ -35,6 +35,8 @@ function CallPage() {
   const query = new URLSearchParams(location.search);
   const friendId = query.get("friendId");
   const isVideoCall = query.get("isVideoCall") === "true";
+  const callId = query.get("callId"); // Lấy callId từ URL (nếu có)
+  const callerId = query.get("callerId"); // Lấy callerId từ URL (nếu có)
 
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [call, setCall] = useState<Call | null>(null);
@@ -59,9 +61,23 @@ function CallPage() {
     if (token) {
       const decoded: any = jwtDecode(token);
       setCurrentUserId(decoded.sub);
-      if (!call) {
+      // Nếu không có callId (người gọi), bắt đầu cuộc gọi mới
+      if (!callId) {
         startCall(decoded.sub, friend.id, isVideoCall);
+      } else if (!stream || !peer) {
+        setupWebRTC(decoded.sub);
       }
+    }
+    if (stream && localVideoRef.current) {
+      localVideoRef.current.srcObject = stream;
+    }
+
+    if (peer) {
+      peer.on("stream", (remoteStream) => {
+        if (remoteVideoRef.current) {
+          remoteVideoRef.current.srcObject = remoteStream;
+        }
+      });
     }
 
     return () => {
@@ -71,8 +87,10 @@ function CallPage() {
       if (peer) {
         peer.destroy();
       }
+      setStream(null);
+      setPeer(null);
     };
-  }, [friend.id, isVideoCall]);
+  }, [friend.id, isVideoCall, callId, callerId]);
 
   const setupMediaStream = async () => {
     try {
@@ -109,7 +127,7 @@ function CallPage() {
       if (!mediaStream) return;
 
       const peerInstance = new SimplePeer({
-        initiator: true,
+        initiator: true, // Người gọi là initiator
         trickle: false,
         stream: mediaStream,
         config: {
@@ -140,42 +158,85 @@ function CallPage() {
     } catch (error) {
       console.error("Error starting call:", error);
       toast.error("Không thể bắt đầu cuộc gọi");
-      navigate(-1);
+      navigate("/message");
+    }
+  };
+
+  const setupWebRTC = async (userId: string) => {
+    try {
+      if (stream && peer) return;
+      const mediaStream = await setupMediaStream();
+      if (!mediaStream) return;
+
+      const peerInstance = new SimplePeer({
+        initiator: false, // Người nhận không phải initiator
+        trickle: false,
+        stream: mediaStream,
+        config: {
+          iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+        },
+      });
+
+      peerInstance.on("signal", async (data) => {
+        const response = await api.post(
+          `call/signal?callId=${callId}&senderId=${userId}&receiverId=${friendId}`,
+          data
+        );
+        console.log("Signal response:", response.data);
+      });
+
+      peerInstance.on("stream", (remoteStream) => {
+        if (remoteVideoRef.current) {
+          remoteVideoRef.current.srcObject = remoteStream;
+        }
+      });
+
+      peerInstance.on("error", (err) => {
+        console.error("Peer error:", err);
+        toast.error("Lỗi kết nối WebRTC");
+      });
+
+      setPeer(peerInstance);
+    } catch (error) {
+      console.error("Error setting up WebRTC:", error);
+      toast.error("Không thể thiết lập cuộc gọi");
+      navigate("/message");
     }
   };
 
   useRealtime((data: any, topic: string) => {
     console.log(`Received WebSocket message from topic ${topic}:`, data);
 
-    // Chỉ xử lý thông báo từ topic /call
     if (topic === "call") {
       const message: SignalingMessage = data;
+      const updatedCall: Call = data;
+
+      // Xử lý tín hiệu WebRTC
       if (
         message &&
-        message.callId === call?.id &&
-        message.senderId !== currentUserId
+        (message.callId == call?.id || message.callId == callId) &&
+        message.senderId != currentUserId
       ) {
         if (peer) {
           peer.signal(message.signalData);
         }
       }
 
-      const updatedCall: Call = data;
+      // Xử lý trạng thái cuộc gọi cho cả người gọi và người nhận
       if (
         updatedCall &&
-        updatedCall.caller.id === currentUserId &&
-        updatedCall.receiver.id === friend.id
+        (updatedCall.caller.id == currentUserId ||
+          updatedCall.receiver.id == currentUserId)
       ) {
         setCall(updatedCall);
-        if (
-          updatedCall.status === "REJECTED" ||
-          updatedCall.status === "ENDED"
-        ) {
+        if (updatedCall.status == "REJECTED" || updatedCall.status == "ENDED") {
           toast.info("Cuộc gọi đã kết thúc");
           if (peer) peer.destroy();
           if (stream) stream.getTracks().forEach((track) => track.stop());
-          navigate(-1);
-        } else if (updatedCall.status === "ACCEPTED") {
+          setStream(null);
+          setPeer(null);
+          navigate("/message");
+        } else if (updatedCall.status == "ACCEPTED") {
           toast.success("Cuộc gọi đã được kết nối!");
         }
       }
@@ -183,16 +244,19 @@ function CallPage() {
   });
 
   const endCall = async () => {
-    if (!call) return;
+    if (!call && !callId) return;
     try {
-      const response = await api.put(`call/${call.id}/end`);
-      setCall(response.data);
+      const id = call ? call.id : callId;
+      await api.put(`call/${id}/end`);
       if (peer) peer.destroy();
       if (stream) stream.getTracks().forEach((track) => track.stop());
-      navigate(-1);
+      setStream(null);
+      setPeer(null);
+      navigate("/message");
     } catch (error) {
       console.error("Error ending call:", error);
       toast.error("Không thể kết thúc cuộc gọi");
+      navigate("/message");
     }
   };
 
@@ -205,6 +269,7 @@ function CallPage() {
   };
 
   const toggleCamera = async () => {
+    if (!isVideoCall) return; // Không cho phép bật/tắt camera nếu không phải video call
     if (stream) {
       const videoTracks = stream.getVideoTracks();
       if (isCameraOn) {
